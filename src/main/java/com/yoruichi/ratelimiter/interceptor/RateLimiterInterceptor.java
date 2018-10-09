@@ -86,8 +86,10 @@ public class RateLimiterInterceptor extends HandlerInterceptorAdapter implements
         int burstCapacity = policy.burstCapacity();
         int timeCount = policy.timeCount();
         TimeUnit timeUnit = policy.timeUnit();
+        int rateType = policy.refreshType().getValue();
 
-        return this.rateLimiter.isAllowed(id, replenishRate, burstCapacity, timeCount, timeUnit);
+
+        return this.rateLimiter.isAllowed(id, replenishRate, burstCapacity, timeCount, timeUnit, rateType);
     }
 
     private boolean isAllowedForRateLimiterPolicy(RateLimiterPolicyBean policy, HttpServletRequest request) throws Exception {
@@ -100,8 +102,9 @@ public class RateLimiterInterceptor extends HandlerInterceptorAdapter implements
         int burstCapacity = policy.getBurstCapacity();
         int timeCount = policy.getTimeCount();
         TimeUnit timeUnit = policy.getTimeUnit();
+        int rateType = policy.getRefreshType().getValue();
 
-        return this.rateLimiter.isAllowed(id, replenishRate, burstCapacity, timeCount, timeUnit);
+        return this.rateLimiter.isAllowed(id, replenishRate, burstCapacity, timeCount, timeUnit, rateType);
     }
 
     private String getRateLimitCode(HttpServletRequest request, RateLimiterPolicy.Type type) {

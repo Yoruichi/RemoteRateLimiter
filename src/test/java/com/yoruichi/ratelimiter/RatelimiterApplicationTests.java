@@ -38,7 +38,11 @@ public class RatelimiterApplicationTests {
     }
 
     /**
-     * Only one request in 10 seconds will be allowed.And the failed request won't refresh the time window.
+     * 限流10秒1次
+     * 按照最后允许的请求刷新更新时间
+     * 每隔6秒发一次请求
+     * 应该是交替成功和失败
+     *
      * @throws Throwable
      */
     @Test
@@ -65,6 +69,43 @@ public class RatelimiterApplicationTests {
         Thread.sleep(6000);
         result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter").accept(MediaType.APPLICATION_JSON))
                 .andDo(r -> Assert.assertTrue("success".equalsIgnoreCase(r.getResponse().getContentAsString())))
+                .andReturn();
+        log.info(result.getResponse().getContentAsString());
+    }
+
+    /**
+     * 限流10秒1次
+     * 按照最后一次请求刷新更新时间
+     * 每隔6秒发一次请求
+     * 只有第一次是成功的
+     * 因为每两次请求之间的间隔不到10秒
+     *
+     * @throws Throwable
+     */
+    @Test
+    public void test5() throws Throwable {
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter5").accept(MediaType.APPLICATION_JSON))
+                .andDo(r -> Assert.assertTrue("success".equalsIgnoreCase(r.getResponse().getContentAsString())))
+                .andReturn();
+        log.info(result.getResponse().getContentAsString());
+        Thread.sleep(6000);
+        result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter5").accept(MediaType.APPLICATION_JSON))
+                .andDo(r -> Assert.assertTrue(!"success".equalsIgnoreCase(r.getResponse().getContentAsString())))
+                .andReturn();
+        log.info(result.getResponse().getContentAsString());
+        Thread.sleep(6000);
+        result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter5").accept(MediaType.APPLICATION_JSON))
+                .andDo(r -> Assert.assertTrue(!"success".equalsIgnoreCase(r.getResponse().getContentAsString())))
+                .andReturn();
+        log.info(result.getResponse().getContentAsString());
+        Thread.sleep(6000);
+        result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter5").accept(MediaType.APPLICATION_JSON))
+                .andDo(r -> Assert.assertTrue(!"success".equalsIgnoreCase(r.getResponse().getContentAsString())))
+                .andReturn();
+        log.info(result.getResponse().getContentAsString());
+        Thread.sleep(6000);
+        result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter5").accept(MediaType.APPLICATION_JSON))
+                .andDo(r -> Assert.assertTrue(!"success".equalsIgnoreCase(r.getResponse().getContentAsString())))
                 .andReturn();
         log.info(result.getResponse().getContentAsString());
     }
@@ -127,24 +168,41 @@ public class RatelimiterApplicationTests {
         }
     }
 
+    /**
+     * 两个限流策略 需要注意策略配置的顺序
+     * 1. 每分钟30次
+     * 2. 每秒3次
+     *
+     * @throws Throwable
+     */
     @Test
     public void test2And4() throws Throwable {
-        int runnerSize = 1;
+        AtomicInteger count = new AtomicInteger();
+        int runnerSize = 5;
         TestRunnable[] trs = new TestRunnable[runnerSize];
         for (int i = 0; i < trs.length; i++) {
             trs[i] = new TestRunnable() {
                 @Override
                 public void runTest() throws Throwable {
-                    MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter2").accept(MediaType.APPLICATION_JSON)).andReturn();
-                    log.info(result.getResponse().getContentAsString());
-                    Thread.sleep(4000);
-                    result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter2").accept(MediaType.APPLICATION_JSON)).andReturn();
-                    log.info(result.getResponse().getContentAsString());
+                    for (int j = 1; j <= 20; j++) {
+                        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/test/limiter2-4").accept(MediaType.APPLICATION_JSON))
+                                .andDo(r -> {
+                                    if ("success".equalsIgnoreCase(r.getResponse().getContentAsString())) {
+                                        count.incrementAndGet();
+                                    }
+                                }).andReturn();
+                        log.info(result.getResponse().getContentAsString());
+                        Assert.assertTrue(count.get() <= 3 * j);
+                        Thread.sleep(1000);
+                    }
                 }
             };
         }
         MultiThreadedTestRunner mttr = new MultiThreadedTestRunner(trs);
         mttr.runTestRunnables();
+        log.info("{}", count.get());
+        Assert.assertTrue(count.get() == 30);
+
     }
 
 

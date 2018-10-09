@@ -21,6 +21,46 @@ public @interface RateLimiterPolicy {
 
     TimeUnit timeUnit() default TimeUnit.SECONDS;
 
+    RefreshType refreshType() default RefreshType.LAST_ALLOWED_REQUEST;
+
+    enum RefreshType {
+        /**
+         * Set last refresh time value of first request time or last replenish time.
+         */
+        FIRST_REQUEST(1),
+        /**
+         * Set last refresh time value of last allowed request time.
+         */
+        LAST_ALLOWED_REQUEST(2),
+        /**
+         * Set last refresh time value of last request time.
+         */
+        LAST_REQUEST(3);
+
+        int value;
+
+        RefreshType(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        /**
+         * default LAST_ALLOWED_REQUEST
+         */
+        public static RefreshType valueOf(int value) {
+            RefreshType[] values = RefreshType.values();
+            for (int i = 0; i < values.length; i++) {
+                if (values[i].getValue() == value) {
+                    return values[i];
+                }
+            }
+            return LAST_ALLOWED_REQUEST;
+        }
+    }
+
     enum Type {
         /* 统一控制 */
         GENERAL,

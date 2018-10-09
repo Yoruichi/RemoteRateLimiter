@@ -17,27 +17,27 @@ public class PoliciesConfig {
      */
     @Bean(name = "policyOne")
     public RateLimiterPolicyBean policyBeanOne() {
-        return new RateLimiterPolicyBean("one", "IP", 1, 1, 10, "SECONDS");
+        return new RateLimiterPolicyBean("one", "IP", 1, 1, 10, "SECONDS", 2);
     }
 
     /**
      * Policy Two
-     * Expect 3 requests and allowed most 10 requests in 1 minute (60 seconds)
+     * Expect 30 requests and allowed most 30 requests in 1 minute (60 seconds)
      * @return
      */
     @Bean(name = "policyTwo")
     public RateLimiterPolicyBean policyBeanTwo() {
-        return new RateLimiterPolicyBean("two", "IP", 3, 10, 1, "MINUTES");
+        return new RateLimiterPolicyBean("two", "IP", 30, 30, 1, "MINUTES", 1);
     }
 
     /**
-     * Policy Two
-     * Expect 3 requests per second and allowed most 10 requests in 1 minute (60 seconds)
+     * Policy Four
+     * Expect 1 requests and allowed most 3 requests per second
      * @return
      */
     @Bean(name = "policyFour")
     public RateLimiterPolicyBean policyBeanFour() {
-        return new RateLimiterPolicyBean("two", "IP", 3, 10, 1, "MINUTES");
+        return new RateLimiterPolicyBean("Four", "IP", 1, 3, 1, "SECONDS", 1);
     }
 
     /**
@@ -47,6 +47,6 @@ public class PoliciesConfig {
      */
     @Bean(name = "policyThr")
     public RateLimiterPolicyBean policyBeanThr() {
-        return new RateLimiterPolicyBean("two", "IP", 1, 3, 5, "SECONDS");
+        return new RateLimiterPolicyBean("two", "IP", 1, 3, 5, "SECONDS", 2);
     }
 }

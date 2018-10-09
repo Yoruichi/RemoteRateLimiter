@@ -16,7 +16,10 @@ public interface RateLimiter {
      *                      0 means to forbidden any request.
      * @param timeCount
      * @param timeUnit
+     * @param rateType  1 means to set last refresh time value of first request time or last replenish time.
+     *                  2 means to set last refresh time value of last allowed request time.
+     *                  3 means to set last refresh time value of last request time.
      * @return
      */
-    boolean isAllowed(String id, int replenishRate, int burstCapacity, int timeCount, TimeUnit timeUnit);
+    boolean isAllowed(String id, int replenishRate, int burstCapacity, int timeCount, TimeUnit timeUnit, int rateType);
 }
