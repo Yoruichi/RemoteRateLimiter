@@ -47,16 +47,16 @@ public class RedisRateLimiter implements RateLimiter {
      * writing the new count.
      */
     @Override
-    public boolean isAllowed(String id, int replenishRate, int burstCapacity, int timeCount, TimeUnit timeUnit, int rateType) {
+    public boolean isAllowed(String id, int replenishRate, int burstCapacity, int timeCount, TimeUnit timeUnit, int rateType, int requested) {
         try {
             List<String> keys = getKeys(id);
             long seconds = timeUnit.toSeconds(timeCount);
 
             // The arguments to the LUA script. time() returns unixtime in seconds.
             // allowed, tokens_left = redis.eval(SCRIPT, keys, args)
-            List<Long> response = redisTemplate.execute(this.script, keys, replenishRate, burstCapacity, Instant.now().getEpochSecond(), 1, seconds, rateType);
-            log.debug("key:{},ratetype:{},allowed_num:{},new_tokens:{},delta:{},last_tokens:{},now:{},last_refreshed:{},ttl_times:{},cal_delta:{}",
-                    keys.get(0), rateType, response.get(0), response.get(1), response.get(2), response.get(3), response.get(4), response.get(5), response.get(6), response.get(7));
+            List<Long> response = redisTemplate.execute(this.script, keys, replenishRate, burstCapacity, Instant.now().getEpochSecond(), requested, seconds, rateType);
+            log.debug("key:{},requested:{},ratetype:{},allowed_num:{},new_tokens:{},delta:{},last_tokens:{},now:{},last_refreshed:{},ttl_times:{},cal_delta:{}",
+                    keys.get(0), requested, rateType, response.get(0), response.get(1), response.get(2), response.get(3), response.get(4), response.get(5), response.get(6), response.get(7));
             return response.get(0) == 1L;
         } catch (Exception e) {
             log.error("Error determining if user allowed from redis", e);

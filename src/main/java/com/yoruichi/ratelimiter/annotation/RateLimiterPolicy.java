@@ -23,6 +23,8 @@ public @interface RateLimiterPolicy {
 
     RefreshType refreshType() default RefreshType.LAST_ALLOWED_REQUEST;
 
+    int requested() default 1;
+
     enum RefreshType {
         /**
          * Set last refresh time value of first request time or last replenish time.
