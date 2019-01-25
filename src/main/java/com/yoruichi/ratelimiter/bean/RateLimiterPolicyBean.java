@@ -1,6 +1,7 @@
 package com.yoruichi.ratelimiter.bean;
 
 import com.yoruichi.ratelimiter.annotation.RateLimiterPolicy;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.concurrent.TimeUnit;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Data
+@AllArgsConstructor
 public class RateLimiterPolicyBean {
     String id;
     RateLimiterPolicy.Type type;

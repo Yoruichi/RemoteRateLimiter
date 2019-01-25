@@ -1,8 +1,11 @@
 package com.yoruichi.ratelimiter;
 
+import com.yoruichi.ratelimiter.annotation.RateLimiterPolicy;
 import com.yoruichi.ratelimiter.bean.RateLimiterPolicyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: Yoruichi
@@ -17,7 +20,7 @@ public class PoliciesConfig {
      */
     @Bean(name = "policyOne")
     public RateLimiterPolicyBean policyBeanOne() {
-        return new RateLimiterPolicyBean("one", "IP", 1, 1, 10, "SECONDS", 2);
+        return new RateLimiterPolicyBean("one", RateLimiterPolicy.Type.IP, 1, 1, 10, TimeUnit.SECONDS, RateLimiterPolicy.RefreshType.FIRST_REQUEST, 2);
     }
 
     /**
@@ -27,7 +30,7 @@ public class PoliciesConfig {
      */
     @Bean(name = "policyTwo")
     public RateLimiterPolicyBean policyBeanTwo() {
-        return new RateLimiterPolicyBean("two", "IP", 30, 30, 1, "MINUTES", 1);
+        return new RateLimiterPolicyBean("two", RateLimiterPolicy.Type.IP, 30, 30, 1, TimeUnit.MINUTES, RateLimiterPolicy.RefreshType.FIRST_REQUEST,1);
     }
 
     /**
@@ -37,7 +40,7 @@ public class PoliciesConfig {
      */
     @Bean(name = "policyFour")
     public RateLimiterPolicyBean policyBeanFour() {
-        return new RateLimiterPolicyBean("Four", "IP", 1, 3, 1, "SECONDS", 1);
+        return new RateLimiterPolicyBean("Four", RateLimiterPolicy.Type.IP, 1, 3, 1, TimeUnit.SECONDS, RateLimiterPolicy.RefreshType.FIRST_REQUEST,1);
     }
 
     /**
@@ -47,6 +50,6 @@ public class PoliciesConfig {
      */
     @Bean(name = "policyThr")
     public RateLimiterPolicyBean policyBeanThr() {
-        return new RateLimiterPolicyBean("two", "IP", 1, 3, 5, "SECONDS", 2);
+        return new RateLimiterPolicyBean("two", RateLimiterPolicy.Type.IP, 1, 3, 5, TimeUnit.SECONDS, RateLimiterPolicy.RefreshType.FIRST_REQUEST,2);
     }
 }
