@@ -1,5 +1,6 @@
 package com.yoruichi.ratelimiter;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.yoruichi.ratelimiter.annotation.RateLimiterPolicies;
 import com.yoruichi.ratelimiter.annotation.RateLimiterPolicy;
 import lombok.extern.slf4j.Slf4j;
