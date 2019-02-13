@@ -9,7 +9,6 @@ import com.google.common.base.Strings;
 import com.yoruichi.ratelimiter.annotation.RateLimiterPolicy;
 import com.yoruichi.ratelimiter.bean.RateLimiterPolicyBean;
 import com.yoruichi.ratelimiter.service.RateLimiter;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
