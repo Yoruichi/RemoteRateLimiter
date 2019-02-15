@@ -50,6 +50,6 @@ public class PoliciesConfig {
      */
     @Bean(name = "policyThr")
     public RateLimiterPolicyBean policyBeanThr() {
-        return new RateLimiterPolicyBean("two", RateLimiterPolicy.Type.IP, 1, 3, 5, TimeUnit.SECONDS, RateLimiterPolicy.RefreshType.FIRST_REQUEST,2);
+        return new RateLimiterPolicyBean("two", RateLimiterPolicy.Type.USER, 1, 3, 5, TimeUnit.SECONDS, RateLimiterPolicy.RefreshType.FIRST_REQUEST,2);
     }
 }

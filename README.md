@@ -154,12 +154,71 @@ public class PoliciesConfig {
 RateLimiterApplicationTests.java
 </a>
 
+#### 5. Dubbo集成
+在服务提供者注解内声明 `filter="ratelimiter"` 并注入参数 `parameters = { "$YOUR_METHOD_NAME.rateLimiterPolicies", "$RATELIMITER_1,$RATELIMITER_2 ..."}` 
+
+例子如下： 
+```java
+@Service(version = "1.0.0", parameters = { "sayHello.rateLimiterPolicies", "policyThr" }, filter = "ratelimiter")
+public class TestDubboProvider implements TestService {
+
+    @Override
+    public String sayHello(TestBean bean) {
+        return "Hello, " + bean.getName();
+    }
+
+}
+```
+其中方法名为 `sayHello` 注入的限速策略类为 `policyThr` 如有多个限速策略用 `,` 连接
+
+#### 6. 自定义Dubbo过滤器
+默认提供的过滤器只支持取ip地址，如果需要扩展自定义字段需要单独实现。
+例子如下：
+```java
+@Activate(group = { Constants.PROVIDER }, value = "MyRatelimiter")
+public class CustomDubboFilter extends RateLimiterDubboFilter {
+
+    @Override
+    protected String getUserId(Invoker<?> invoker, Invocation invocation) {
+        return ((TestBean) invocation.getArguments()[0]).getName();
+    }
+}
+```
+并且在
+```$xslt
+src
+ |-main
+    |-java
+        |-com
+            |-xxx
+                |-XxxFilter.java (实现Filter接口)
+    |-resources
+        |-META-INF
+            |-dubbo
+                |-org.apache.dubbo.rpc.Filter (纯文本文件，内容为：xxx=com.xxx.XxxFilter)
+```
+对应文件内添加配置使得自定义的filter生效。
+同时修改服务提供者的注解配置
+```java
+@Service(version = "1.0.0", parameters = { "sayHello.rateLimiterPolicies", "policyThr" }, filter = "MyRatelimiter")
+public class TestDubboProvider implements TestService {
+
+    @Override
+    public String sayHello(TestBean bean) {
+        return "Hello, " + bean.getName();
+    }
+
+}
+```
+
 ### 依赖
 spring-boot-starter-date-redis
 
 spring-boot-starter-web
 
 guava
+
+dubbo-spring-boot-starter
 
 lombok
 

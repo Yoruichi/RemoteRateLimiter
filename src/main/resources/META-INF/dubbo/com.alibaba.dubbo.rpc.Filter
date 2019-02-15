@@ -1,0 +1,1 @@
+ratelimiter=com.yoruichi.ratelimiter.interceptor.RateLimiterDubboFilter
