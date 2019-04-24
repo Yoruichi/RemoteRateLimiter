@@ -40,7 +40,7 @@ public class RateLimiterDubboFilter implements Filter {
                     RateLimiterPolicyBean policyBean = apc.getBean(name, RateLimiterPolicyBean.class);
                     if (!isAllowedForRateLimiterPolicy(policyBean, invoker, invocation)) {
                         log.debug("Denied by policy {}.", names);
-                        return null;
+                        return new RpcResult("Denied by rate limit.");
                     }
                 } catch (BeansException e) {
                     log.warn("Failed to get RateLimiterPolicyBean. Caused by:", e);
