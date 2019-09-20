@@ -67,9 +67,11 @@ public class RedisConfiguration {
 
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(configuration,
                 LettucePoolingClientConfiguration.builder().poolConfig(poolConfig).build());
+        lettuceConnectionFactory.afterPropertiesSet();
         RedisTemplate template = new StringRedisTemplate(lettuceConnectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        template.afterPropertiesSet();
         return template;
     }
 
