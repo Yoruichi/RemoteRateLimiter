@@ -1,7 +1,7 @@
 package com.yoruichi.ratelimiter;
 
-import com.alibaba.dubbo.config.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,14 +32,14 @@ public class DubboConfig {
     @Value("${cerberus.dubbo.register.file:dubbo/registry.properties}")
     private String registryFile;
 
-    @Bean
-    public ApplicationConfig applicationConfig() {
-        ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName(applicationName);
-        applicationConfig.setLogger(loggerName);
-        applicationConfig.setVersion(serviceVersion);
-        return applicationConfig;
-    }
+//    @Bean
+//    public ApplicationConfig applicationConfig() {
+//        ApplicationConfig applicationConfig = new ApplicationConfig();
+//        applicationConfig.setName(applicationName);
+//        applicationConfig.setLogger(loggerName);
+//        applicationConfig.setVersion(serviceVersion);
+//        return applicationConfig;
+//    }
 
     @Bean
     public RegistryConfig registryConfig() {

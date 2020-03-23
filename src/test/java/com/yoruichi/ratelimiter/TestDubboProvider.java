@@ -1,7 +1,7 @@
 package com.yoruichi.ratelimiter;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Service;
 
 /**
  * @Author: Yoruichi

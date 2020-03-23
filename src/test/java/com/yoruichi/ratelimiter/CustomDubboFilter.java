@@ -1,18 +1,19 @@
 package com.yoruichi.ratelimiter;
 
-import com.alibaba.dubbo.common.Constants;
-import com.alibaba.dubbo.common.extension.Activate;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
 import com.yoruichi.ratelimiter.interceptor.RateLimiterDubboFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.common.extension.Activate;
+import org.apache.dubbo.rpc.Invocation;
+import org.apache.dubbo.rpc.Invoker;
+
+import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
 
 /**
  * @Author: Yoruichi
  * @Date: 2019/2/13 11:45 AM
  */
 @Slf4j
-@Activate(group = { Constants.PROVIDER }, value = "MyRatelimiter")
+@Activate(group = PROVIDER, value = "MyRatelimiter")
 public class CustomDubboFilter extends RateLimiterDubboFilter {
 
     @Override

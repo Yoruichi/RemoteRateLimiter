@@ -1,14 +1,11 @@
 package com.yoruichi.ratelimiter;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.yoruichi.ratelimiter.annotation.RateLimiterPolicies;
 import com.yoruichi.ratelimiter.annotation.RateLimiterPolicy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: Yoruichi

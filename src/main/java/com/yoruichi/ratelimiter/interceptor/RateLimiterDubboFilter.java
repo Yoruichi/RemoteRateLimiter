@@ -1,20 +1,20 @@
 package com.yoruichi.ratelimiter.interceptor;
 
-import com.alibaba.dubbo.common.Constants;
-import com.alibaba.dubbo.common.extension.Activate;
-import com.alibaba.dubbo.config.spring.ServiceBean;
-import com.alibaba.dubbo.rpc.*;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.yoruichi.ratelimiter.annotation.RateLimiterPolicy;
+import com.yoruichi.ratelimiter.bean.ApcUtil;
 import com.yoruichi.ratelimiter.bean.RateLimiterPolicyBean;
 import com.yoruichi.ratelimiter.service.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.common.extension.Activate;
+import org.apache.dubbo.rpc.*;
 import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static org.apache.dubbo.common.constants.CommonConstants.PROVIDER;
 
 /**
  * @Author: Yoruichi
@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * http://dubbo.apache.org/en-us/docs/dev/impls/filter.html
  */
 @Slf4j
-@Activate(group = { Constants.PROVIDER }, value = "ratelimiter")
+@Activate(group = PROVIDER, value = "ratelimiter")
 public class RateLimiterDubboFilter implements Filter {
     private static final String GENERAL_RATE_LIMIT_CODE = "__general";
     private static final String RATE_LIMIT_ATTACHMENT_KEY = "rateLimiterPolicies";
@@ -33,14 +33,15 @@ public class RateLimiterDubboFilter implements Filter {
         String methodName = invocation.getMethodName();
         String policies = invoker.getUrl().getMethodParameter(methodName, RATE_LIMIT_ATTACHMENT_KEY, "");
         if (!Strings.isNullOrEmpty(policies)) {
-            ApplicationContext apc = ServiceBean.getSpringContext();
             List<String> names = Splitter.on(",").splitToList(policies);
             for (String name : names) {
                 try {
-                    RateLimiterPolicyBean policyBean = apc.getBean(name, RateLimiterPolicyBean.class);
+                    RateLimiterPolicyBean policyBean = ApcUtil.apc.getBean(name, RateLimiterPolicyBean.class);
                     if (!isAllowedForRateLimiterPolicy(policyBean, invoker, invocation)) {
                         log.debug("Denied by policy {}.", names);
-                        return new RpcResult("Denied by rate limit.");
+                        throw new RpcException(RpcException.LIMIT_EXCEEDED_EXCEPTION,
+                                "Waiting concurrent invoke timeout in provider-side for service:  " + invoker.getInterface().getName() + ", method: "
+                                        + invocation.getMethodName() + ", policy: " + names);
                     }
                 } catch (BeansException e) {
                     log.warn("Failed to get RateLimiterPolicyBean. Caused by:", e);
@@ -64,7 +65,7 @@ public class RateLimiterDubboFilter implements Filter {
         TimeUnit timeUnit = policy.getTimeUnit();
         int rateType = policy.getRefreshType().getValue();
         int requested = policy.getRequested();
-        RateLimiter rateLimiter = ServiceBean.getSpringContext().getBean(RateLimiter.class);
+        RateLimiter rateLimiter = ApcUtil.apc.getBean(RateLimiter.class);
         return rateLimiter.isAllowed(id, replenishRate, burstCapacity, timeCount, timeUnit, rateType, requested);
     }
 
